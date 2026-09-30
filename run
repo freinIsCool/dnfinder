@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd cargo
+
+cargo build
+
+./target/debug/Dnfinder

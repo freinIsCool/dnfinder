@@ -1,2 +1,2 @@
 # dnfinder
-a simple DNF TUI frontend
+a TUI frontent for dnf, made for fedora. Inspired by omarchies AUR frontend
