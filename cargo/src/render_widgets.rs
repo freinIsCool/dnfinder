@@ -6,7 +6,7 @@ use ratatui::{
     Frame,
 };
 
-pub fn render(frame: &mut Frame, log: &str, apps: &str, query: &str) {
+pub fn render(frame: &mut Frame, log: &str, apps_visual: &[String], query: &str) {
     let area = frame.area();
 
     let main_layout = Layout::default()
@@ -33,26 +33,34 @@ pub fn render(frame: &mut Frame, log: &str, apps: &str, query: &str) {
         ])
         .split(bottom_layout[0]);
 
+    let search = Paragraph::new(format!("> {}", query))
+        .block(Block::bordered().title("find"));
+
+    frame.render_widget(search, find_layout[0]);
+
+    frame.set_cursor_position((
+        find_layout[0].x + 3 + query.len() as u16,
+        find_layout[0].y + 1,
+    ));
+
     let app_info = Paragraph::new("")
         .block(
             Block::bordered()
                 .title("app info")
-                .style(Style::default().bg(Color::Black)),
         )
         .wrap(Wrap { trim: true });
 
     let search = Paragraph::new(format!("> {}", query))
         .block(Block::bordered().title("find"));
 
-    let items: Vec<ListItem> = apps
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .map(|app| ListItem::new(Line::from(app)))
+    let items: Vec<ListItem> = apps_visual
+        .iter()
+        .filter(|app| !app.trim().is_empty() && app.contains(query))
+        .map(|app| ListItem::new(Line::from(app.as_str())))
         .collect();
 
     let app_list = List::new(items)
-        .block(Block::bordered())
-        .style(Style::default().fg(Color::White));
+        .block(Block::bordered());
 
     let text_log = Paragraph::new(log)
         .block(Block::bordered().title("log"))

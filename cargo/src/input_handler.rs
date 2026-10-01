@@ -13,29 +13,36 @@ pub fn handle_download() -> io::Result<Option<String>> {
     Command::new("sudo")
         .args(["dnf", "install", "firefox"])
         .status()?;
-    ratatui::restore();
-    ratatui::init();
 
-    Ok(Some("Download finished!\n\npress q or esc to quit".to_string()))
+    return Ok(Some("quit".to_string()));
 }
 
-pub fn inputs() -> io::Result<Option<String>> {
+pub fn inputs(query: &mut String) -> io::Result<Option<String>> {
     if !event::poll(Duration::from_millis(50))? {
         return Ok(None);
     }
 
     if let Event::Key(key) = event::read()? {
         if key.kind == KeyEventKind::Press {
-            if key.code == KeyCode::Esc || key.code == KeyCode::Char('q') {
-                return Ok(Some("quit".to_string()));
+            match key.code {
+                KeyCode::Char(c) if c.is_ascii_alphabetic() => {
+                    query.push(c);
+                }
+
+                KeyCode::Backspace => {
+                    query.pop();
+                }
+
+                KeyCode::Esc | KeyCode::Esc => {
+                    return Ok(Some("quit".to_string()));
+                }
+
+                KeyCode::Enter => {
+                    return handle_download();
+                }
+
+                _ => {}
             }
-            if key.code == KeyCode::Left {
-                return Ok(Some("key left pressed".to_string()));
-            }
-            if key.code == KeyCode::Enter {
-                return handle_download();
-            }
-            return Ok(Some(format!("key {}, pressed!", key.code.to_string())));
         }
     }
 
