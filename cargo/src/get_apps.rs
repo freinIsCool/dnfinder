@@ -33,7 +33,7 @@ mod tests {
     use super::format_packages_v;
 
     #[test]
-    fn outputPackages_v() {
+    fn output_packages_v() {
         assert_eq!(format_packages_v("app1\napp2\napp3\n"), "[\"app1\", \"app2\", \"app3\"]");
     }
 }

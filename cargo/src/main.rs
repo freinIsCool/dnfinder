@@ -1,8 +1,9 @@
 mod get_apps_visual;
 mod get_apps;
 mod input_handler;
+mod render_widgets;
 
-use ratatui::{DefaultTerminal, Frame, layout::Rect, widgets::{Block, Paragraph, Wrap}};
+use ratatui::{DefaultTerminal, Frame, layout::{Constraint, Direction, Layout, Rect}, widgets::{Block, Paragraph, Wrap}};
 
 fn main() {
     let _ = ratatui::run(app);
@@ -10,9 +11,21 @@ fn main() {
 
 fn app(terminal: &mut DefaultTerminal) -> std::io::Result<()> {
     let mut log = String::new();
+    let mut apps = String::new();
+    let query = String::new();
+    let (packages_tx, packages_rx) = std::sync::mpsc::channel();
+    std::thread::spawn(move || {
+        let _ = packages_tx.send(get_apps_visual::get_packages_string());
+    });
 
     loop {
-        terminal.draw(|frame| render(frame, &log))?;
+        if let Ok(Ok(packages)) = packages_rx.try_recv() {
+            apps = packages;
+        }
+
+        terminal.draw(|frame| {
+            render_widgets::render(frame, &log, &apps, &query);
+        })?;
 
         match input_handler::inputs()? {
             Some(message) if message == "quit" => return Ok(()),
@@ -20,23 +33,4 @@ fn app(terminal: &mut DefaultTerminal) -> std::io::Result<()> {
             None => {}
         }
     }
-}
-
-fn render(frame: &mut Frame, log: &str) {
-    let apps: String = get_apps_visual::get_packages_string().unwrap_or_default();
-    let apps_format = format!(">\n {}", apps);
-
-    let text_apps = Paragraph::new("").block(Block::bordered()
-        .title("app info"))
-        .wrap(Wrap { trim: true });
-    let text_find = Paragraph::new(apps_format).block(Block::bordered()
-        .title("find"))
-        .wrap(Wrap { trim: true });
-    let text_log = Paragraph::new(log).block(Block::bordered()
-        .title("log"))
-        .wrap(Wrap { trim: true });
-
-    frame.render_widget(text_apps, Rect::new(2, 0, 250, 20));
-    frame.render_widget(text_find, Rect::new(2, 20, 80, 45));
-    frame.render_widget(text_log, Rect::new(86, 20, 100, 45));
 }
