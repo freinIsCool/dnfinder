@@ -1,33 +1,38 @@
-use ratatui::{DefaultTerminal, Frame, layout::Rect, text, widgets::{Block, Paragraph, Wrap}};
-use std::time::Duration;
+mod get_apps_visual;
+mod get_apps;
+mod input_handler;
+
+use ratatui::{DefaultTerminal, Frame, layout::Rect, widgets::{Block, Paragraph, Wrap}};
 
 fn main() {
-    ratatui::run(app);
+    let _ = ratatui::run(app);
 }
 
 fn app(terminal: &mut DefaultTerminal) -> std::io::Result<()> {
+    let mut log = String::new();
 
     loop {
-        terminal.draw(|frame| render(frame))?;
+        terminal.draw(|frame| render(frame, &log))?;
 
-        if crossterm::event::poll(Duration::from_millis(80))?
-            && crossterm::event::read()?.is_key_press()
-        {
-            break Ok(());
+        match input_handler::inputs()? {
+            Some(message) if message == "quit" => return Ok(()),
+            Some(message) => log = message,
+            None => {}
         }
     }
 }
 
-fn render(frame: &mut Frame) {
-    let text = "";
+fn render(frame: &mut Frame, log: &str) {
+    let apps: String = get_apps_visual::get_packages_string().unwrap_or_default();
+    let apps_format = format!(">\n {}", apps);
 
-    let text_apps = Paragraph::new(text).block(Block::bordered()
+    let text_apps = Paragraph::new("").block(Block::bordered()
         .title("app info"))
         .wrap(Wrap { trim: true });
-    let text_find = Paragraph::new(" > \n app 1\n app 2\n app 3\n app 4\n app 5\n app 6\n app 7\n app 8\n app 9\n app 10\n app 11\n app 12\n app 13").block(Block::bordered()
+    let text_find = Paragraph::new(apps_format).block(Block::bordered()
         .title("find"))
         .wrap(Wrap { trim: true });
-    let text_log = Paragraph::new("").block(Block::bordered()
+    let text_log = Paragraph::new(log).block(Block::bordered()
         .title("log"))
         .wrap(Wrap { trim: true });
 

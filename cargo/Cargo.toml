@@ -12,3 +12,6 @@ ratatui-textarea = "*"
 [[bin]]
 name = "Dnfinder"
 path = "src/main.rs"
+
+[lints.rust]
+unused = "allow"
