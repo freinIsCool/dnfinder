@@ -2,6 +2,10 @@
 a rataTUI frontent for dnf, made for fedora. Inspired by omarchies AUR frontend
 built with rust and ratatui
 
+
+<img width="1877" height="1016" alt="dms_capture_1790944422420" src="https://github.com/user-attachments/assets/5f4dc1fb-2517-40ac-a688-1cdc8e4c049d" />
+
+
 installing:
 
 1. download the ``dnfnd`` binary from [here](https://github.com/freinIsCool/dnfinder/releases/tag/v1.0.0)
