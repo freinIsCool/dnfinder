@@ -4,13 +4,18 @@ built with rust and ratatui
 
 installing:
 
-1. download the ``dnfnd`` binary from 'placeholder'
-   option 1 (single user):
+1. download the ``dnfnd`` binary from [here](https://github.com/freinIsCool/dnfinder/releases/tag/v1.0.0)
+
+* option 1 (single user):
 2. copy it to $HOME/.local/bin/
 3. run ``dnfnd`` in a terminal
-   option 2 (global):
+  
+* option 2 (global):
 2. copy it to /usr/bin/share/
 3. run ``dnfnd`` in a terminal
+
+
+
 
 
 building from source
