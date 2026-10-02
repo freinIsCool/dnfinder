@@ -1,6 +1,6 @@
 [package]
 name = "cargo"
-version = "1.0.0-indev"
+version = "1.0.0"
 edition = "2024"
 
 [dependencies]
@@ -10,7 +10,7 @@ color-eyre = "0.6.5"
 ratatui-textarea = "*"
 
 [[bin]]
-name = "Dnfinder"
+name = "dnfnd"
 path = "src/main.rs"
 
 [lints.rust]
