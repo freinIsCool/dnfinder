@@ -1,7 +1,8 @@
 [package]
-name = "cargo"
-version = "1.0.0"
+name = "dnfinder"
+version = "1.0.1"
 edition = "2024"
+license = "MIT"
 
 [dependencies]
 crossterm = "0.29"

@@ -10,21 +10,33 @@ pub fn get_info(package: &str) -> Result<Vec<String>, std::io::Error> {
 
 fn extract_description(output: &str) -> Vec<String> {
 	let mut description_started = false;
+	let mut description = Vec::new();
 
-	let description: Vec<String> = output
-		.lines()
-		.filter_map(|line| {
-			if !description_started && line.starts_with("Description") {
+	for line in output.lines() {
+		if !description_started {
+			if line.starts_with("Description") {
 				description_started = true;
-				None
-			} else if description_started {
-				Some(line.to_owned())
-			} else {
-				None
+				let first_line = line
+					.strip_prefix("Description")
+					.unwrap_or(line)
+					.trim_start();
+				let first_line = first_line
+					.strip_prefix(':')
+					.unwrap_or(first_line)
+					.trim();
+				if !first_line.is_empty() {
+					description.push(first_line.to_owned());
+				}
 			}
-		})
-		.take_while(|line| !line.starts_with("Vendor"))
-		.collect();
+			continue;
+		}
+
+		if line.starts_with("Vendor") {
+			break;
+		}
+
+		description.push(line.to_owned());
+	}
 
 	if description.is_empty() {
 		vec!["This app dosen't have a description".to_owned()]
@@ -39,10 +51,12 @@ mod tests {
 
 	#[test]
 	fn returns_lines_after_description_header() {
-
 		let output = "Name : sample\nDescription : sample package\n  Details here\nURL : example\nVendor : Example\nPackager : Example";
 
-		assert_eq!(extract_description(output), ["  Details here", "URL : example"]);
+		assert_eq!(
+			extract_description(output),
+			["sample package", "  Details here", "URL : example"]
+		);
 	}
 
 	#[test]

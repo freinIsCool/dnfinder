@@ -17,6 +17,10 @@ pub fn handle_download(app_to_install: &str) -> io::Result<()> {
     Ok(())
 }
 
+pub const fn is_ascii_alphanumeric_and_dash(c: char) -> bool {
+    matches!(c, '0'..='9' | 'A'..='Z' | 'a'..='z' | '-')
+}
+
 pub fn inputs(
     query: &mut String,
     list_state: &mut ListState,
@@ -30,7 +34,7 @@ pub fn inputs(
     if let Event::Key(key) = event::read()? {
         if key.kind == KeyEventKind::Press {
             match key.code {
-                KeyCode::Char(c) if c.is_ascii_alphabetic() => {
+                KeyCode::Char(c) if is_ascii_alphanumeric_and_dash(c) => {
                     query.push(c);
                     list_state.select(Some(0));
                 }
